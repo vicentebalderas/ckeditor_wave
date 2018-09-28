@@ -20,7 +20,7 @@ function newEditor(ck_editor) {
         ck_editor.nextSibling.querySelector('.ck-content').addEventListener(
           'DOMNodeRemoved', (event) => {
           var element = event.target;
-          var classes = element.className.split(' ');
+          var classes = element.className ? element.className.split(' ') : [];
           if (classes.includes('image'))
             server.destroy(id(element.children[0]));
         });
@@ -39,32 +39,55 @@ class UploadAdapter {
     this.loader = loader;
   }
   upload() {
+
+    // Update loader's progress.
+    server.onUploadProgress = (data) => {
+        this.loader.uploadTotal = data.total;
+        this.loader.uploaded = data.loaded;
+    };
+
+    // Return promise that will be resolved when file is uploaded.
     return server.upload(this.loader.file);
+  }
+
+  abort() {
+    // Reject promise returned from upload() method.
+    server.abortUpload();
   }
 }
 
 var server = {
   upload: upload,
-  destroy: destroy
+  destroy: destroy,
+  onUploadProgress: null,
+  abortUpload: abort,
+  xhr: null
 }
 
 function upload(file) {
   return new Promise((resolve, reject) => {
-    var xhr = new XMLHttpRequest();
+    server.xhr = new XMLHttpRequest();
     var formData = new FormData();
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4 && xhr.status !== 200)
+    server.xhr.upload.onprogress = (evt) => {
+      if (evt.lengthComputable) 
+        {
+	  server.onUploadProgress(evt);
+        } 
+    };
+    server.xhr.onreadystatechange = () => {
+      if (server.xhr.readyState === 4 && server.xhr.status !== 200)
         reject('Image upload failed');
-      if (xhr.readyState === 4 && xhr.status === 200) {
+      if (server.xhr.readyState === 4 && server.xhr.status === 200) {
         resolve({
-          default: xhr.responseText
+          default: server.xhr.responseText
         });
+//        server.onUploadProgress({loaded: 0, total: 0});
         console.log('Image upload successful');
       }
     };
     formData.set('ck_image', file);
-    xhr.open('POST', '/ckeditor_wave/ck_images');
-    xhr.send(formData);
+    server.xhr.open('POST', '/ckeditor_wave/ck_images');
+    server.xhr.send(formData);
   });
 }
 
@@ -75,11 +98,18 @@ function destroy(id) {
     if (xhr.readyState === 4 && xhr.status !== 200)
       console.log('Image deletion failed');
     if (xhr.readyState === 4 && xhr.status === 200)
+      server.onUploadProgress({loaded: 0, total: 0});
       console.log(xhr.responseText);
   };
   formData.set('method', 'delete');
   xhr.open('DELETE', '/ckeditor_wave/ck_images/' + id);
   xhr.send(formData);
+}
+
+function abort() {
+  if (server.xhr) {
+    server.xhr.abort();
+  }
 }
 
 function id(element) {

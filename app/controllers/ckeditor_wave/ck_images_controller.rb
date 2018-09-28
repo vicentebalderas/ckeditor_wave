@@ -13,7 +13,7 @@ module CkeditorWave
 
     def destroy
       ck_image = CkImage.find_by_uuid(params[:id])
-      if ck_image.destroy
+      if ck_image.blank? || ck_image.destroy
         render plain: 'Image deletion successful'
       else
         render plain: 'Image deletion failed'
