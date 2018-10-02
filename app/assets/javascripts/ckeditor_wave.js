@@ -16,7 +16,21 @@ function newEditor(ck_editor) {
 
   if (ck_editor === null) return false;
   try {
-    ClassicEditor.create(ck_editor).then(function (editor) {
+    ClassicEditor.create(ck_editor, {
+        image: {
+            toolbar: [ 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight' ],
+            styles: [
+                // This option is equal to a situation where no style is applied.
+                'full',
+
+                // This represents an image aligned to the left.
+                'alignLeft',
+
+                // This represents an image aligned to the right.
+                'alignRight'
+            ]
+        }
+    } ).then(function (editor) {
       editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
         return new UploadAdapter(loader);
       };
