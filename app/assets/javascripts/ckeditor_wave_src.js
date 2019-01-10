@@ -24,7 +24,8 @@ function newEditor(ck_editor) {
                 // This represents an image aligned to the right.
                 'alignRight'
             ]
-        }
+        },
+        language: 'ru'
     } )
       .then(editor => {
         editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
