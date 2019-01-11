@@ -39,6 +39,14 @@ function newEditor(ck_editor) {
           if (classes.includes('image'))
             server.destroy(id(element.children[0]));
         });
+
+	editor.editing.view.document.on( 'change:isFocused', function( evt, name, value ) {
+          if (value) {
+              editor.sourceElement.parentNode.classList.add("ckeditor-focused");
+          } else {
+              editor.sourceElement.parentNode.classList.remove("ckeditor-focused");
+          }
+        });
       })
       .catch(error => {
         console.error(error);
