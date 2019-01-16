@@ -35,6 +35,9 @@ function newEditor(ck_editor) {
         language: 'ru'
     } ).then(function (editor) {
       contentEditor = editor;
+      
+      editor.setData(ck_editor.value);
+      
       editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
         return new UploadAdapter(loader);
       };

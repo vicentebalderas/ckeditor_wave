@@ -32,6 +32,8 @@ function newEditor(ck_editor) {
       .then(editor => {
 	contentEditor = editor;
 
+	editor.setData(ck_editor.value);
+
         editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
           return new UploadAdapter(loader);
         };
