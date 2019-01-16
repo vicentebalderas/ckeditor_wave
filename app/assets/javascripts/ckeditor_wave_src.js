@@ -1,3 +1,5 @@
+var contentEditor;
+
 function initiateCkeditor() {
   var editors = Array.from(arguments);
     editors.forEach(function(editor){
@@ -28,6 +30,8 @@ function newEditor(ck_editor) {
         language: 'ru'
     } )
       .then(editor => {
+	contentEditor = editor;
+
         editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
           return new UploadAdapter(loader);
         };
