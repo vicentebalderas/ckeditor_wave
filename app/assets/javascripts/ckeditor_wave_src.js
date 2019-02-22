@@ -27,7 +27,7 @@ function newEditor(ck_editor) {
                 'alignRight'
             ]
         },
-        language: 'ru'
+        language: 'es-mx'
     } )
       .then(editor => {
 	contentEditor = editor;
@@ -98,10 +98,10 @@ function upload(file) {
     server.xhr = new XMLHttpRequest();
     var formData = new FormData();
     server.xhr.upload.onprogress = (evt) => {
-      if (evt.lengthComputable) 
+      if (evt.lengthComputable)
         {
 	  server.onUploadProgress(evt);
-        } 
+        }
     };
     server.xhr.onreadystatechange = () => {
       if (server.xhr.readyState === 4 && server.xhr.status !== 200)
