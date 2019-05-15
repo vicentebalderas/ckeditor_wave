@@ -1,3 +1,5 @@
+import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed';
+
 var contentEditor;
 
 function initiateCkeditor() {
@@ -14,6 +16,8 @@ function newEditor(ck_editor) {
   try{
     ClassicEditor
       .create(ck_editor, {
+        plugins: [ MediaEmbed ],
+        toolbar: [ 'mediaEmbed'],
         image: {
             toolbar: [ 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight' ],
             styles: [
